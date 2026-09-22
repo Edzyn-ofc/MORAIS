@@ -39,18 +39,35 @@ export function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<number | null>(null);
 
-  const fetchOrders = async () => {
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) console.error(error);
-    if (data) setOrders(data);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    fetchOrders();
+    const loadOrders = async () => {
+      console.log('🔍 A verificar utilizador...');
+
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      console.log('👤 Utilizador:', userData?.user?.id);
+      console.log('❌ Erro auth:', userError);
+
+      console.log('🔍 A pedir pedidos...');
+
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      console.log('📦 Resultado bruto:', { data, error });
+      console.log('📊 Nº de pedidos:', data?.length);
+      console.log('⚠️ Erro:', error);
+
+      if (error) {
+        console.error('Erro ao buscar pedidos:', error);
+        toast.error('Erro ao carregar pedidos: ' + error.message);
+      }
+
+      if (data) setOrders(data);
+      setLoading(false);
+    };
+
+    loadOrders();
   }, []);
 
   const updateStatus = async (id: number, status: string) => {
@@ -102,13 +119,17 @@ export function AdminOrders() {
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-ink-800/50 bg-white border border-dashed border-brand-200 rounded-2xl">
           <IconPackage className="w-12 h-12 mb-3 text-brand-300" />
-          <p className="text-sm">Nenhum pedido {filter !== 'todos' ? `com estado "${filter}"` : ''}.</p>
+          <p className="text-sm">
+            Nenhum pedido {filter !== 'todos' ? `com estado "${filter}"` : ''}.
+          </p>
         </div>
       ) : (
         <div className="grid gap-3">
           {filtered.map((order) => (
-            <div key={order.id} className="bg-white border border-brand-100 rounded-2xl overflow-hidden">
-              {/* Cabeçalho do pedido */}
+            <div
+              key={order.id}
+              className="bg-white border border-brand-100 rounded-2xl overflow-hidden"
+            >
               <div
                 className="flex items-center justify-between p-4 cursor-pointer hover:bg-cream-50 transition"
                 onClick={() => setExpanded(expanded === order.id ? null : order.id)}
@@ -119,32 +140,39 @@ export function AdminOrders() {
                   <span className="text-xs text-ink-800/50">
                     {new Date(order.created_at).toLocaleString('pt-PT')}
                   </span>
-                  <span className={`text-xs font-medium px-3 py-1 rounded-full border ${statusColors[order.status]}`}>
+                  <span
+                    className={`text-xs font-medium px-3 py-1 rounded-full border ${statusColors[order.status] || ''}`}
+                  >
                     {order.status}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="font-bold text-brand-700">{Number(order.total).toFixed(2)} MT</span>
+                  <span className="font-bold text-brand-700">
+                    {Number(order.total).toFixed(2)} MT
+                  </span>
                   <span className="text-ink-800/40 text-lg">
                     {expanded === order.id ? '−' : '+'}
                   </span>
                 </div>
               </div>
 
-              {/* Detalhes (expandido) */}
               {expanded === order.id && (
                 <div className="border-t border-brand-100 p-4 bg-cream-50/50">
                   <div className="grid md:grid-cols-2 gap-6">
-                    {/* Contacto */}
                     <div>
                       <h3 className="font-semibold text-sm text-ink-900 mb-3 uppercase tracking-wider">
                         Dados do Cliente
                       </h3>
                       <ul className="space-y-2 text-sm text-ink-800/80">
-                        <li><strong>Nome:</strong> {order.customer_name}</li>
+                        <li>
+                          <strong>Nome:</strong> {order.customer_name}
+                        </li>
                         <li className="flex items-center gap-2">
                           <IconPhone className="w-4 h-4 text-brand-600" />
-                          <a href={`tel:${order.customer_phone}`} className="text-brand-700 hover:underline">
+                          <a
+                            href={`tel:${order.customer_phone}`}
+                            className="text-brand-700 hover:underline"
+                          >
                             {order.customer_phone}
                           </a>
                         </li>
@@ -160,16 +188,19 @@ export function AdminOrders() {
                       </ul>
                     </div>
 
-                    {/* Produtos */}
                     <div>
                       <h3 className="font-semibold text-sm text-ink-900 mb-3 uppercase tracking-wider">
                         Produtos
                       </h3>
                       <ul className="space-y-2">
                         {order.items.map((item, idx) => (
-                          <li key={idx} className="flex justify-between text-sm bg-white border border-brand-100 rounded-lg px-3 py-2">
+                          <li
+                            key={idx}
+                            className="flex justify-between text-sm bg-white border border-brand-100 rounded-lg px-3 py-2"
+                          >
                             <span>
-                              {item.name} <span className="text-ink-800/50">× {item.quantity}</span>
+                              {item.name}{' '}
+                              <span className="text-ink-800/50">× {item.quantity}</span>
                             </span>
                             <span className="font-medium text-brand-700">
                               {(item.price * item.quantity).toFixed(2)} MT
@@ -178,13 +209,14 @@ export function AdminOrders() {
                         ))}
                         <li className="flex justify-between pt-2 border-t border-brand-200 font-bold text-ink-900">
                           <span>Total</span>
-                          <span className="text-brand-700">{Number(order.total).toFixed(2)} MT</span>
+                          <span className="text-brand-700">
+                            {Number(order.total).toFixed(2)} MT
+                          </span>
                         </li>
                       </ul>
                     </div>
                   </div>
 
-                  {/* Ações */}
                   <div className="mt-6 pt-4 border-t border-brand-100 flex flex-wrap gap-3 items-center">
                     <label className="text-sm font-medium text-ink-800">Alterar estado:</label>
                     <select
@@ -193,7 +225,9 @@ export function AdminOrders() {
                       className="border border-brand-200 rounded-lg px-3 py-1.5 text-sm bg-white"
                     >
                       {STATUSES.map((s) => (
-                        <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                        <option key={s} value={s}>
+                          {s.charAt(0).toUpperCase() + s.slice(1)}
+                        </option>
                       ))}
                     </select>
                     <button
