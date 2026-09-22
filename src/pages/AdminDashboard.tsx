@@ -23,3 +23,14 @@ export function AdminDashboard() {
     </div>
   );
 }
+import { IconPackage, IconCart, IconUsers } from '../components/Icons';
+
+<Link to="/admin/produtos" className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded">
+  <IconPackage className="w-4 h-4" /> Produtos
+</Link>
+<Link to="/admin/pedidos" className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded">
+  <IconCart className="w-4 h-4" /> Pedidos
+</Link>
+<Link to="/admin/usuarios" className="flex items-center gap-2 hover:bg-gray-100 p-2 rounded">
+  <IconUsers className="w-4 h-4" /> Utilizadores
+</Link>
