@@ -55,3 +55,20 @@ export default function App() {
     </ParallaxProvider>
   );
 }
+
+import { AdminOrders } from './pages/AdminOrders';
+
+// ...
+<Route
+  path="/admin"
+  element={
+    <AdminRoute>
+      <AdminDashboard />
+    </AdminRoute>
+  }
+>
+  <Route index element={<AdminProducts />} />
+  <Route path="produtos" element={<AdminProducts />} />
+  <Route path="usuarios" element={<AdminUsers />} />
+  <Route path="pedidos" element={<AdminOrders />} />   {/* NOVO */}
+</Route>
