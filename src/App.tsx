@@ -13,6 +13,7 @@ import { Checkout } from './pages/Checkout';
 import { AdminDashboard } from './pages/AdminDashboard';
 import { AdminProducts } from './pages/AdminProducts';
 import { AdminUsers } from './pages/AdminUsers';
+import { AdminOrders } from './pages/AdminOrders';
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
                   <Route index element={<AdminProducts />} />
                   <Route path="produtos" element={<AdminProducts />} />
                   <Route path="usuarios" element={<AdminUsers />} />
+                  <Route path="pedidos" element={<AdminOrders />} />
                 </Route>
               </Routes>
             </Layout>
@@ -55,20 +57,3 @@ export default function App() {
     </ParallaxProvider>
   );
 }
-
-import { AdminOrders } from './pages/AdminOrders';
-
-// ...
-<Route
-  path="/admin"
-  element={
-    <AdminRoute>
-      <AdminDashboard />
-    </AdminRoute>
-  }
->
-  <Route index element={<AdminProducts />} />
-  <Route path="produtos" element={<AdminProducts />} />
-  <Route path="usuarios" element={<AdminUsers />} />
-  <Route path="pedidos" element={<AdminOrders />} />   {/* NOVO */}
-</Route>
