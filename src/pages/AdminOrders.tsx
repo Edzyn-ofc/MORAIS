@@ -41,26 +41,14 @@ export function AdminOrders() {
 
   useEffect(() => {
     const loadOrders = async () => {
-      console.log('🔍 A verificar utilizador...');
-
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      console.log('👤 Utilizador:', userData?.user?.id);
-      console.log('❌ Erro auth:', userError);
-
-      console.log('🔍 A pedir pedidos...');
-
       const { data, error } = await supabase
         .from('orders')
         .select('*')
         .order('created_at', { ascending: false });
 
-      console.log('📦 Resultado bruto:', { data, error });
-      console.log('📊 Nº de pedidos:', data?.length);
-      console.log('⚠️ Erro:', error);
-
       if (error) {
-        console.error('Erro ao buscar pedidos:', error);
-        toast.error('Erro ao carregar pedidos: ' + error.message);
+        console.error(error);
+        toast.error('Erro ao carregar pedidos.');
       }
 
       if (data) setOrders(data);
