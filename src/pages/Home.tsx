@@ -47,7 +47,7 @@ export function Home() {
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 bg-white/5 backdrop-blur-xl border border-white/15 text-gold-200 text-xs font-medium tracking-widest uppercase px-4 py-2 rounded-full mb-8">
               <IconLeaf className="w-3.5 h-3.5" />
-              Agronegócio Moçambicano · Desde 2010
+              Agronegócio Moçambicano · Desde o nascimento ds independência 
             </span>
 
             <h1 className="text-5xl md:text-7xl font-extrabold font-display text-white leading-[1.05] tracking-tight">
@@ -89,7 +89,7 @@ export function Home() {
 
         {/* Indicador de scroll */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50">
-          <span className="text-[10px] tracking-[0.3em] uppercase">Deslize</span>
+          <span className="text-[10px] tracking-[0.7em] uppercase">Deslize</span>
           <div className="w-px h-10 bg-gradient-to-b from-white/50 to-transparent" />
         </div>
       </section>
